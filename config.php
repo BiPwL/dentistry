@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 // ───── База данных ─────
-define('DB_HOST', '127.0.0.1');
+define('DB_HOST', '127.127.126.50');  // OpenServer default bind address
 define('DB_PORT', 3306);
 define('DB_NAME', 'dentistry');
 define('DB_USER', 'root');
