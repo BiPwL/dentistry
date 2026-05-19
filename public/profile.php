@@ -27,6 +27,10 @@ require __DIR__ . '/../templates/header.php';
                 <dd class="col-sm-8"><?= h($user['role_name']) ?></dd>
             </dl>
 
+            <?php if (($user['role_code'] ?? '') === 'doctor'): ?>
+                <a href="/doctor_profile_edit.php" class="btn btn-orange mb-3">Редактировать профиль врача</a>
+            <?php endif; ?>
+
             <p class="text-muted small">
                 Полноценный кабинет вашей роли появится в следующих обновлениях.
             </p>

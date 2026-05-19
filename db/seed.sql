@@ -87,3 +87,10 @@ INSERT INTO protocol (id, appointment_id, protocol_text, recommendations) VALUES
 INSERT INTO payment (appointment_id, method, total_amount) VALUES
     (5, 'card', 4200.00),
     (6, 'cash', 10000.00);
+
+-- ───── Профили врачей ─────
+INSERT INTO doctor_profile (user_id, specialization, bio) VALUES
+    (3, 'Врач-стоматолог-терапевт',
+        'Стаж 12 лет. Специализируется на лечении кариеса, пульпита и эстетической реставрации. Бережный подход и безболезненное лечение.'),
+    (4, 'Стоматолог-хирург, ортопед',
+        'Стаж 9 лет. Удаление зубов любой сложности, протезирование, имплантология. Кандидат медицинских наук.');

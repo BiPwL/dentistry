@@ -31,6 +31,7 @@ function _nav_active(string $href, string $current): string {
             <ul class="navbar-nav me-auto">
                 <li class="nav-item"><a class="nav-link<?= _nav_active('/', $_currentPath) ?>" href="/">Главная</a></li>
                 <li class="nav-item"><a class="nav-link<?= _nav_active('/services.php', $_currentPath) ?>" href="/services.php">Услуги</a></li>
+                <li class="nav-item"><a class="nav-link<?= _nav_active('/doctors.php', $_currentPath) ?>" href="/doctors.php">Врачи</a></li>
                 <li class="nav-item"><a class="nav-link<?= _nav_active('/blog.php', $_currentPath) ?>" href="/blog.php">Блог</a></li>
                 <li class="nav-item"><a class="nav-link<?= _nav_active('/contacts.php', $_currentPath) ?>" href="/contacts.php">Контакты</a></li>
             </ul>
