@@ -1,9 +1,9 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/lib/sanitize.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/sanitize.php';
 
 $_pageTitle = 'Контакты';
-require __DIR__ . '/templates/header.php';
+require __DIR__ . '/../templates/header.php';
 ?>
 
 <h1 class="mb-4">Контакты и график</h1>
@@ -36,4 +36,4 @@ require __DIR__ . '/templates/header.php';
     </div>
 </div>
 
-<?php require __DIR__ . '/templates/footer.php'; ?>
+<?php require __DIR__ . '/../templates/footer.php'; ?>
