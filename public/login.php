@@ -1,10 +1,10 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/lib/db.php';
-require_once __DIR__ . '/lib/session.php';
-require_once __DIR__ . '/lib/csrf.php';
-require_once __DIR__ . '/lib/sanitize.php';
-require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/session.php';
+require_once __DIR__ . '/../lib/csrf.php';
+require_once __DIR__ . '/../lib/sanitize.php';
+require_once __DIR__ . '/../lib/auth.php';
 
 // Если уже залогинен — на профиль
 if (Auth::isAuthenticated()) {
@@ -34,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-require __DIR__ . '/templates/header.php';
+require __DIR__ . '/../templates/header.php';
 ?>
 
 <div class="row justify-content-center">
@@ -71,4 +71,4 @@ require __DIR__ . '/templates/header.php';
     </div>
 </div>
 
-<?php require __DIR__ . '/templates/footer.php'; ?>
+<?php require __DIR__ . '/../templates/footer.php'; ?>

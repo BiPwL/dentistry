@@ -1,7 +1,7 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/lib/session.php';
-require_once __DIR__ . '/lib/csrf.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/session.php';
+require_once __DIR__ . '/../lib/csrf.php';
 
 // Только POST, защищённый CSRF
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

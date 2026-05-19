@@ -1,14 +1,14 @@
 <?php
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/lib/db.php';
-require_once __DIR__ . '/lib/sanitize.php';
-require_once __DIR__ . '/lib/auth.php';
+require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/../lib/db.php';
+require_once __DIR__ . '/../lib/sanitize.php';
+require_once __DIR__ . '/../lib/auth.php';
 
 $_pageTitle = 'Каталог услуг';
 $services = DB::all('SELECT * FROM service ORDER BY name');
 $isAdmin = Auth::hasRole('admin');
 
-require __DIR__ . '/templates/header.php';
+require __DIR__ . '/../templates/header.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -46,4 +46,4 @@ require __DIR__ . '/templates/header.php';
     </div>
 <?php endif; ?>
 
-<?php require __DIR__ . '/templates/footer.php'; ?>
+<?php require __DIR__ . '/../templates/footer.php'; ?>
