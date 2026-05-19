@@ -106,3 +106,26 @@ a:hover { color: var(--clinic-primary); }
 .status-performed { background: #B7B7AE; color: #3A3A33; }
 .status-completed { background: #C7C7C7; color: #404040; }
 .status-noshow    { background: #F5B7B7; color: #8A2D2D; }
+
+/* Doctors */
+.doctor-photo {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    border: 3px solid var(--clinic-accent);
+    background: var(--clinic-soft);
+}
+.doctor-photo--placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--clinic-primary-2);
+    text-transform: uppercase;
+}
+.text-orange-2 { color: var(--clinic-primary-2); font-weight: 600; }
