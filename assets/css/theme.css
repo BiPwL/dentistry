@@ -1,0 +1,108 @@
+:root {
+    --clinic-bg:        #FFF8F1;
+    --clinic-surface:   #FFFFFF;
+    --clinic-primary:   #F4A261;
+    --clinic-primary-2: #E76F51;
+    --clinic-accent:    #FFE0C2;
+    --clinic-soft:      #FFF1E0;
+    --clinic-ink:       #4A3B2A;
+    --clinic-muted:     #8A7964;
+    --clinic-border:    #F0DCC4;
+    --clinic-success:   #6FB098;
+    --clinic-danger:    #D88080;
+}
+
+html, body { background: var(--clinic-bg); color: var(--clinic-ink); }
+body { font-family: system-ui, "Segoe UI", Tahoma, Arial, sans-serif; }
+
+a { color: var(--clinic-primary-2); }
+a:hover { color: var(--clinic-primary); }
+
+/* Navbar */
+.clinic-navbar {
+    background: var(--clinic-surface);
+    border-bottom: 1px solid var(--clinic-border);
+}
+.clinic-navbar .navbar-brand { color: var(--clinic-primary-2); }
+.clinic-navbar .nav-link { color: var(--clinic-ink); }
+.clinic-navbar .nav-link.active,
+.clinic-navbar .nav-link:hover { color: var(--clinic-primary-2); }
+.brand-mark { font-size: 1.2em; }
+
+/* Buttons */
+.btn-orange {
+    background: var(--clinic-primary);
+    border-color: var(--clinic-primary);
+    color: #fff;
+}
+.btn-orange:hover {
+    background: var(--clinic-primary-2);
+    border-color: var(--clinic-primary-2);
+    color: #fff;
+}
+.btn-outline-orange {
+    background: transparent;
+    border: 1px solid var(--clinic-primary);
+    color: var(--clinic-primary-2);
+}
+.btn-outline-orange:hover {
+    background: var(--clinic-soft);
+    color: var(--clinic-primary-2);
+}
+
+/* Cards (услуги, статьи) */
+.clinic-card {
+    background: var(--clinic-surface);
+    border: 1px solid var(--clinic-border);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .15s ease, box-shadow .15s ease;
+    height: 100%;
+}
+.clinic-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(244, 162, 97, .12);
+}
+.clinic-card .card-img-top {
+    aspect-ratio: 16/10;
+    object-fit: cover;
+    background: var(--clinic-accent);
+}
+.clinic-card .card-body { color: var(--clinic-ink); }
+.clinic-card .price-badge {
+    display: inline-block;
+    background: var(--clinic-soft);
+    color: var(--clinic-primary-2);
+    border-radius: 999px;
+    padding: 0.25rem 0.75rem;
+    font-weight: 600;
+}
+
+/* Hero */
+.clinic-hero {
+    background: linear-gradient(135deg, var(--clinic-soft) 0%, var(--clinic-accent) 100%);
+    border-radius: 18px;
+    padding: 3rem 2rem;
+    margin-bottom: 2rem;
+}
+.clinic-hero h1 { color: var(--clinic-primary-2); }
+
+/* Footer */
+.clinic-footer {
+    background: var(--clinic-surface);
+    border-top: 1px solid var(--clinic-border);
+}
+
+/* Badges для статусов записей (понадобится в Фазе 3) */
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+.status-created   { background: #C8E6C9; color: #2E7D32; }
+.status-confirmed { background: #B7CEC1; color: #335E4D; }
+.status-performed { background: #B7B7AE; color: #3A3A33; }
+.status-completed { background: #C7C7C7; color: #404040; }
+.status-noshow    { background: #F5B7B7; color: #8A2D2D; }
