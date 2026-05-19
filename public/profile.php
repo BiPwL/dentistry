@@ -13,12 +13,16 @@ $role = $user['role_code'];
 $_pageTitle = 'Личный кабинет';
 if ($role === 'patient') {
     $_pageScripts = ['/assets/js/booking.js'];
+} elseif ($role === 'doctor') {
+    $_pageScripts = ['/assets/js/doctor.js'];
 }
 
 require __DIR__ . '/../templates/header.php';
 
 if ($role === 'patient') {
     require __DIR__ . '/../templates/cabinet_patient.php';
+} elseif ($role === 'doctor') {
+    require __DIR__ . '/../templates/cabinet_doctor.php';
 } else {
     ?>
     <div class="row justify-content-center">
