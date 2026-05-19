@@ -129,3 +129,13 @@ a:hover { color: var(--clinic-primary); }
     text-transform: uppercase;
 }
 .text-orange-2 { color: var(--clinic-primary-2); font-weight: 600; }
+
+/* Patient cabinet */
+.appt-completed { cursor: pointer; }
+.appt-completed:hover { background: var(--clinic-soft); }
+.booking-day-btn, .booking-slot-btn { margin: 0.15rem; }
+#bookingDays .btn.active, #bookingSlots .btn.active {
+    background: var(--clinic-primary);
+    border-color: var(--clinic-primary);
+    color: #fff;
+}
