@@ -139,3 +139,10 @@ a:hover { color: var(--clinic-primary); }
     border-color: var(--clinic-primary);
     color: #fff;
 }
+
+/* Doctor schedule */
+.schedule-table th, .schedule-table td { vertical-align: middle; }
+.appt-cell { cursor: pointer; }
+.appt-cell:hover { filter: brightness(0.97); }
+.x-small { font-size: 0.72rem; }
+.svc-toggle { cursor: pointer; user-select: none; }
