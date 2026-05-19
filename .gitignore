@@ -1,2 +1,4 @@
 .claude/
 *.log
+data/mail.log
+data/*.log
