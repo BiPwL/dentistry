@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS protocol;
 DROP TABLE IF EXISTS appointment;
 DROP TABLE IF EXISTS service;
 DROP TABLE IF EXISTS blog_article;
+DROP TABLE IF EXISTS doctor_profile;
 DROP TABLE IF EXISTS email_code;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS role;
@@ -31,6 +32,15 @@ CREATE TABLE user (
     booking_ban_until DATE NULL COMMENT 'Запрет онлайн-записи до даты (после неявки)',
     created_at        DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES role(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE doctor_profile (
+    user_id        INT UNSIGNED PRIMARY KEY,
+    specialization VARCHAR(150) NOT NULL DEFAULT '',
+    bio            TEXT NULL,
+    photo_path     VARCHAR(255) NULL,
+    updated_at     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_docprofile_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE email_code (
