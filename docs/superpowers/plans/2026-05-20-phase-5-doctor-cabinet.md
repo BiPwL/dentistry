@@ -129,10 +129,13 @@ foreach ($rows as $r) {
 <div id="doctor-cabinet" data-csrf="<?= h(Csrf::token()) ?>">
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
         <h1 class="h3 mb-0">Моё расписание</h1>
-        <form method="post" action="/logout.php" class="m-0">
-            <?= Csrf::field() ?>
-            <button type="submit" class="btn btn-link text-muted">Выйти</button>
-        </form>
+        <div class="d-flex gap-2 align-items-center">
+            <a href="/doctor_profile_edit.php" class="btn btn-outline-orange btn-sm">Профиль врача</a>
+            <form method="post" action="/logout.php" class="m-0">
+                <?= Csrf::field() ?>
+                <button type="submit" class="btn btn-link text-muted">Выйти</button>
+            </form>
+        </div>
     </div>
 
     <div class="d-flex justify-content-between align-items-center mb-3">
