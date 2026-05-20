@@ -1,6 +1,14 @@
 <?php
 declare(strict_types=1);
 
+// ───── Локальные секреты (вне git) ─────
+// Если есть config.local.php — он подключается ПЕРВЫМ и может задать любые
+// константы (например, SMTP_*). Значения ниже применяются только если
+// соответствующая константа ещё не определена. См. config.local.php.example.
+if (is_file(__DIR__ . '/config.local.php')) {
+    require __DIR__ . '/config.local.php';
+}
+
 // ───── База данных ─────
 define('DB_HOST', '127.127.126.50');  // OpenServer default bind address
 define('DB_PORT', 3306);
@@ -9,19 +17,19 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
-// ───── SMTP (плейсхолдеры — заполнить в Фазе 2) ─────
-define('SMTP_HOST', 'smtp.gmail.com');
-define('SMTP_PORT', 587);
-define('SMTP_USER', '');
-define('SMTP_PASS', '');
-define('SMTP_FROM', 'noreply@dentistry.local');
-define('SMTP_FROM_NAME', 'Стоматологическая клиника');
+// ───── SMTP (дефолты; реальные секреты — в config.local.php, вне git) ─────
+defined('SMTP_HOST')      || define('SMTP_HOST', 'smtp.gmail.com');
+defined('SMTP_PORT')      || define('SMTP_PORT', 587);
+defined('SMTP_USER')      || define('SMTP_USER', '');
+defined('SMTP_PASS')      || define('SMTP_PASS', '');
+defined('SMTP_FROM')      || define('SMTP_FROM', 'noreply@dentistry.local');
+defined('SMTP_FROM_NAME') || define('SMTP_FROM_NAME', 'Стоматологическая клиника');
 
 // ───── Сайт ─────
 define('SITE_URL', 'http://dentistry.local');
 define('SITE_NAME', 'Стоматологическая клиника «Улыбка»');
-define('CLINIC_ADDRESS', 'г. Москва, ул. Примерная, д. 1');
-define('CLINIC_PHONE', '+7 (495) 123-45-67');
+define('CLINIC_ADDRESS', 'г. Ростов-на-Дону, ул. Есенина, д. Каруселина');
+define('CLINIC_PHONE', '+7 (000) 123-45-67');
 define('CLINIC_EMAIL', 'info@dentistry.local');
 
 // ───── Расписание врачей ─────

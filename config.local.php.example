@@ -1,0 +1,32 @@
+<?php
+// ─────────────────────────────────────────────────────────────────────────
+// ЛОКАЛЬНЫЕ СЕКРЕТЫ — НЕ коммитить!
+//
+// Скопируйте этот файл в config.local.php (без .example) и впишите свои данные.
+// config.local.php добавлен в .gitignore и в репозиторий не попадёт.
+//
+// Эти define() выполняются ДО config.php и переопределяют его значения.
+// ─────────────────────────────────────────────────────────────────────────
+
+// ── SMTP для отправки писем (коды подтверждения, напоминания) ──
+//
+// ВАЖНО про ProtonMail: обычный SMTP по паролю аккаунта НЕ работает.
+// Нужен ProtonMail Bridge (приложение на ПК), которое даёт ЛОКАЛЬНЫЙ SMTP:
+//   хост 127.0.0.1, порт 1025, и ОТДЕЛЬНЫЙ пароль приложения (не пароль почты).
+// Пример для ProtonMail Bridge:
+//
+// define('SMTP_HOST', '127.0.0.1');
+// define('SMTP_PORT', 1025);
+// define('SMTP_USER', 'dentistry.smile@proton.me');
+// define('SMTP_PASS', 'ПАРОЛЬ-ИЗ-PROTON-BRIDGE');   // НЕ пароль от почты!
+// define('SMTP_FROM', 'dentistry.smile@proton.me');
+// define('SMTP_FROM_NAME', 'Стоматологическая клиника «Улыбка»');
+//
+// Для Gmail (проще для теста): включите 2FA и создайте App Password,
+// затем:
+// define('SMTP_HOST', 'smtp.gmail.com');
+// define('SMTP_PORT', 587);
+// define('SMTP_USER', 'ваш@gmail.com');
+// define('SMTP_PASS', 'app-password-16-символов');
+// define('SMTP_FROM', 'ваш@gmail.com');
+// define('SMTP_FROM_NAME', 'Стоматологическая клиника «Улыбка»');
