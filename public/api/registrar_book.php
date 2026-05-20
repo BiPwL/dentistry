@@ -26,4 +26,5 @@ DB::exec(
     "INSERT INTO appointment (patient_id, doctor_id, slot_start, slot_end, status) VALUES (:p,:d,:s,:e,'created')",
     ['p'=>$patientId,'d'=>$doctorId,'s'=>$slot,'e'=>slot_end_for($slot)]
 );
+appt_log_status((int)DB::lastId(), null, 'created', (int)Auth::user()['id']);
 echo json_encode(['ok'=>true]);

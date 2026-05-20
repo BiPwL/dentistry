@@ -54,4 +54,7 @@ try {
     exit;
 }
 
-echo json_encode(['ok' => true, 'appointment_id' => DB::lastId()]);
+$newId = DB::lastId();
+appt_log_status($newId, null, 'created', $patientId);
+
+echo json_encode(['ok' => true, 'appointment_id' => $newId]);

@@ -69,6 +69,15 @@
                 ul.innerHTML = '';
                 resp.services.forEach(function (s) { var li = document.createElement('li'); li.textContent = s.name + ' — ' + s.price; ul.appendChild(li); });
                 document.getElementById('mgTotal').textContent = a.total;
+                var hist = document.getElementById('mgHistory');
+                if (hist) {
+                    hist.innerHTML = '';
+                    (resp.history || []).forEach(function (h) {
+                        var li = document.createElement('li');
+                        li.textContent = h.at + ': ' + h.old + ' → ' + h.new + (h.by ? ' (' + h.by + ')' : '');
+                        hist.appendChild(li);
+                    });
+                }
                 canPay = a.can_pay;
                 if (a.paid) {
                     mgPayMethod.value = a.pay_method; mgPayMethod.disabled = true;

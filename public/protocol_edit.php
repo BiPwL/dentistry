@@ -55,10 +55,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ['a' => $apptId, 't' => $form['protocol_text'], 'r' => $form['recommendations']]
         );
         // После сохранения протокола запись автоматически переводится в «Исполнена»
-        DB::exec(
+        $changed = DB::exec(
             "UPDATE appointment SET status = 'performed' WHERE id = :id AND status = 'confirmed'",
             ['id' => $apptId]
         );
+        if ($changed > 0) {
+            appt_log_status($apptId, 'confirmed', 'performed', $docId);
+        }
         header('Location: /profile.php?appt=' . $apptId);
         exit;
     }

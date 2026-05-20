@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/auth.php';
 require_once __DIR__ . '/../../lib/csrf.php';
+require_once __DIR__ . '/../../lib/appointment.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -28,6 +29,7 @@ try {
     DB::exec("INSERT INTO payment (appointment_id, method_id, total_amount) VALUES (:a,:m,:t)", ['a'=>$apptId,'m'=>$methodId,'t'=>$total]);
     DB::exec("UPDATE appointment SET status = 'completed' WHERE id = :id", ['id'=>$apptId]);
     $pdo->commit();
+    appt_log_status($apptId, 'performed', 'completed', (int)Auth::user()['id']);
 } catch (Throwable $e) {
     $pdo->rollBack();
     echo json_encode(['ok'=>false,'error'=>'Не удалось провести оплату.']); exit;
