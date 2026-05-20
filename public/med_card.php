@@ -21,7 +21,7 @@ if ($patient === null) { http_response_code(404); echo 'Пациент не на
 $patientFio = $patient['last_name'].' '.$patient['first_name'].' '.$patient['middle_name'];
 
 $protocols = DB::all(
-    "SELECT a.slot_start, pr.protocol_text, pr.recommendations,
+    "SELECT a.id AS appt_id, a.slot_start, pr.protocol_text, pr.recommendations,
             d.last_name AS d_last, d.first_name AS d_first, d.middle_name AS d_mid
        FROM appointment a
        JOIN protocol pr ON pr.appointment_id = a.id
@@ -40,6 +40,21 @@ if (empty($protocols)) {
     foreach ($protocols as $p) {
         $docFio = $p['d_last'].' '.$p['d_first'].' '.$p['d_mid'];
         $body .= '<h2>' . h(fmt_dt($p['slot_start'])) . ' — ' . h($docFio) . '</h2>';
+
+        $services = DB::all(
+            "SELECT s.name, aps.price_at_time
+               FROM appointment_service aps JOIN service s ON s.id = aps.service_id
+              WHERE aps.appointment_id = :id ORDER BY s.name",
+            ['id' => (int) $p['appt_id']]
+        );
+        if (!empty($services)) {
+            $body .= '<table><tr><th>Услуга</th><th class="right">Стоимость</th></tr>';
+            foreach ($services as $s) {
+                $body .= '<tr><td>' . h($s['name']) . '</td><td class="right">' . h(fmt_price($s['price_at_time'])) . '</td></tr>';
+            }
+            $body .= '</table>';
+        }
+
         $body .= '<div>' . nl2br(h($p['protocol_text'])) . '</div>';
         if (!empty($p['recommendations'])) {
             $body .= '<div class="muted"><b>Рекомендации:</b> ' . nl2br(h($p['recommendations'])) . '</div>';
