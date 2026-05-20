@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/auth.php';
 require_once __DIR__ . '/../../lib/csrf.php';
+require_once __DIR__ . '/../../lib/appointment.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -20,12 +21,15 @@ if (DB::one("SELECT id FROM payment WHERE appointment_id = :id", ['id'=>$apptId]
 
 $total = (float) (DB::one("SELECT COALESCE(SUM(price_at_time),0) AS t FROM appointment_service WHERE appointment_id = :id", ['id'=>$apptId])['t'] ?? 0);
 
+$methodId = ($method === 'cash') ? 1 : 2;
+
 $pdo = DB::pdo();
 $pdo->beginTransaction();
 try {
-    DB::exec("INSERT INTO payment (appointment_id, method, total_amount) VALUES (:a,:m,:t)", ['a'=>$apptId,'m'=>$method,'t'=>$total]);
+    DB::exec("INSERT INTO payment (appointment_id, method_id, total_amount) VALUES (:a,:m,:t)", ['a'=>$apptId,'m'=>$methodId,'t'=>$total]);
     DB::exec("UPDATE appointment SET status = 'completed' WHERE id = :id", ['id'=>$apptId]);
     $pdo->commit();
+    appt_log_status($apptId, 'performed', 'completed', (int)Auth::user()['id']);
 } catch (Throwable $e) {
     $pdo->rollBack();
     echo json_encode(['ok'=>false,'error'=>'Не удалось провести оплату.']); exit;

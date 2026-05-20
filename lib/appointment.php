@@ -109,3 +109,19 @@ function patient_booking_ban_until(int $patientId): ?string
     $banUntil = date('Y-m-d', strtotime($row['last_noshow'] . ' +' . (int) NOSHOW_BAN_DAYS . ' days'));
     return $banUntil >= date('Y-m-d') ? $banUntil : null;
 }
+
+/** Запись в журнал смены статусов записи. */
+function appt_log_status(int $appointmentId, ?string $old, string $new, ?int $byUserId): void
+{
+    DB::exec(
+        "INSERT INTO appointment_status_history (appointment_id, old_status, new_status, changed_by)
+         VALUES (:a, :o, :n, :u)",
+        ['a' => $appointmentId, 'o' => $old, 'n' => $new, 'u' => $byUserId]
+    );
+}
+
+/** Выходной ли у врача в указанную дату ('Y-m-d'). */
+function doctor_is_off(int $doctorId, string $date): bool
+{
+    return DB::one("SELECT 1 FROM doctor_day_off WHERE doctor_id=:d AND off_date=:dt", ['d'=>$doctorId,'dt'=>$date]) !== null;
+}

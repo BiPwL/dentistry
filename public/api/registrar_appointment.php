@@ -23,7 +23,26 @@ foreach (DB::all("SELECT s.name, aps.price_at_time FROM appointment_service aps 
     $services[] = ['name' => $s['name'], 'price' => fmt_price($s['price_at_time'])];
     $total += (float) $s['price_at_time'];
 }
-$payment = DB::one("SELECT method FROM payment WHERE appointment_id = :id", ['id'=>$apptId]);
+$payment = DB::one("SELECT pm.code AS method FROM payment pay JOIN payment_method pm ON pm.id = pay.method_id WHERE pay.appointment_id = :id", ['id'=>$apptId]);
+
+$history = DB::all(
+    "SELECT h.old_status, h.new_status, h.changed_at,
+            u.last_name, u.first_name
+       FROM appointment_status_history h
+       LEFT JOIN user u ON u.id = h.changed_by
+      WHERE h.appointment_id = :id ORDER BY h.changed_at",
+    ['id' => $apptId]
+);
+$histOut = [];
+foreach ($history as $hh) {
+    $by = $hh['last_name'] ? ($hh['last_name'].' '.mb_substr($hh['first_name'],0,1).'.') : '';
+    $histOut[] = [
+        'old' => $hh['old_status'] ? appt_status_label($hh['old_status']) : '—',
+        'new' => appt_status_label($hh['new_status']),
+        'at'  => fmt_dt($hh['changed_at']),
+        'by'  => $by,
+    ];
+}
 
 echo json_encode([
     'ok' => true,
@@ -39,4 +58,5 @@ echo json_encode([
         'pay_method'   => $payment['method'] ?? null,
     ],
     'services' => $services,
+    'history' => $histOut,
 ], JSON_UNESCAPED_UNICODE);

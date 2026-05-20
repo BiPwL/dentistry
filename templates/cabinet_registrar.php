@@ -127,6 +127,8 @@ if ($selDoctor > 0) {
         <h6>Оказанные услуги</h6>
         <ul id="mgServices" class="small mb-2"></ul>
         <p class="fw-semibold mb-3">Итого: <span id="mgTotal"></span></p>
+        <h6 class="mt-3">История статусов</h6>
+        <ul id="mgHistory" class="small mb-2"></ul>
         <label class="form-label">Способ оплаты</label>
         <select id="mgPayMethod" class="form-select mb-3">
             <option value="">— выберите —</option>

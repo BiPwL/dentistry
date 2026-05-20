@@ -15,15 +15,16 @@ $errors  = [];
 $success = false;
 
 $profile = DB::one('SELECT * FROM doctor_profile WHERE user_id = :id', ['id' => $uid]);
+$specs = DB::all("SELECT id, name FROM specialization ORDER BY name");
+$specId = (int) ($profile['specialization_id'] ?? 0);
 $form = [
-    'specialization' => $profile['specialization'] ?? '',
     'bio'            => $profile['bio'] ?? '',
 ];
 $currentPhoto = $profile['photo_path'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     Csrf::requireValid();
-    $form['specialization'] = trim((string) ($_POST['specialization'] ?? ''));
+    $specId = (int) ($_POST['specialization_id'] ?? 0);
     $form['bio']            = trim((string) ($_POST['bio'] ?? ''));
 
     $newPhotoPath = $currentPhoto;
@@ -53,12 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errors)) {
         DB::exec(
-            'INSERT INTO doctor_profile (user_id, specialization, bio, photo_path)
+            'INSERT INTO doctor_profile (user_id, specialization_id, bio, photo_path)
              VALUES (:id, :s, :b, :p)
-             ON DUPLICATE KEY UPDATE specialization = VALUES(specialization),
+             ON DUPLICATE KEY UPDATE specialization_id = VALUES(specialization_id),
                                      bio = VALUES(bio),
                                      photo_path = VALUES(photo_path)',
-            ['id' => $uid, 's' => $form['specialization'], 'b' => $form['bio'], 'p' => $newPhotoPath]
+            ['id' => $uid, 's' => ($specId > 0 ? $specId : null), 'b' => $form['bio'], 'p' => $newPhotoPath]
         );
         $currentPhoto = $newPhotoPath;
         $success = true;
@@ -93,8 +94,12 @@ require __DIR__ . '/../templates/header.php';
 
                 <div class="mb-3">
                     <label class="form-label">Специализация</label>
-                    <input type="text" name="specialization" class="form-control" maxlength="150"
-                           value="<?= h($form['specialization']) ?>">
+                    <select name="specialization_id" class="form-select">
+                        <option value="">— не выбрана —</option>
+                        <?php foreach ($specs as $sp): ?>
+                            <option value="<?= (int)$sp['id'] ?>" <?= $sp['id']==$specId?'selected':'' ?>><?= h($sp['name']) ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="mb-3">

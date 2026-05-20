@@ -5,10 +5,13 @@ require_once __DIR__ . '/../lib/sanitize.php';
 
 $_pageTitle = 'Врачи клиники';
 $doctors = DB::all(
-    "SELECT u.last_name, u.first_name, u.middle_name,
-            dp.specialization, dp.bio, dp.photo_path
+    "SELECT u.id, u.last_name, u.first_name, u.middle_name,
+            sp.name AS specialization, dp.bio, dp.photo_path,
+            (SELECT ROUND(AVG(rating),1) FROM review r WHERE r.doctor_id=u.id) AS avg_rating,
+            (SELECT COUNT(*) FROM review r WHERE r.doctor_id=u.id) AS reviews_count
        FROM user u
        LEFT JOIN doctor_profile dp ON dp.user_id = u.id
+       LEFT JOIN specialization sp ON sp.id = dp.specialization_id
       WHERE u.role_id = 3
       ORDER BY u.last_name, u.first_name"
 );
@@ -37,6 +40,9 @@ require __DIR__ . '/../templates/header.php';
                     <h5 class="mb-1"><?= h($fio) ?></h5>
                     <?php if (!empty($d['specialization'])): ?>
                         <div class="text-orange-2 mb-2"><?= h($d['specialization']) ?></div>
+                    <?php endif; ?>
+                    <?php if ((int)$d['reviews_count'] > 0): ?>
+                        <div class="text-warning mb-2"><small>★ <?= h((string)$d['avg_rating']) ?> (<?= (int)$d['reviews_count'] ?> отзывов)</small></div>
                     <?php endif; ?>
                     <?php if (!empty($d['bio'])): ?>
                         <p class="text-muted small mb-0"><?= h($d['bio']) ?></p>

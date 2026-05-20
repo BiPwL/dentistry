@@ -31,6 +31,14 @@ if (!empty($completedIds)) {
     }
 }
 
+$reviewsByAppt = [];
+if (!empty($completedIds)) {
+    $in = implode(',', array_fill(0, count($completedIds), '?'));
+    foreach (DB::all("SELECT appointment_id, rating, body FROM review WHERE appointment_id IN ($in)", $completedIds) as $rv) {
+        $reviewsByAppt[(int)$rv['appointment_id']] = ['rating'=>(int)$rv['rating'],'body'=>$rv['body']];
+    }
+}
+
 $hasCreated = (bool) array_filter($appointments, fn($a) => $a['status'] === 'created');
 $banUntil = patient_booking_ban_until($pid);
 $banned = $banUntil !== null;
@@ -96,6 +104,10 @@ $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHER
         </script>
     <?php endforeach; ?>
 
+    <script type="application/json" id="reviews-data">
+        <?= json_encode($reviewsByAppt, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>
+    </script>
+
     <script type="application/json" id="doctors-data">
         <?= json_encode(array_map(fn($d) => ['id' => (int) $d['id'], 'fio' => fio_short($d['last_name'], $d['first_name'], $d['middle_name'])], $doctors), JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) ?>
     </script>
@@ -159,6 +171,20 @@ $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHER
         <div class="d-flex gap-2">
           <a id="completedProtocol" class="btn btn-outline-orange btn-sm" target="_blank" rel="noopener" href="#">Протокол приёма</a>
           <a id="completedReceipt" class="btn btn-outline-orange btn-sm" target="_blank" rel="noopener" href="#">Чек</a>
+        </div>
+        <hr>
+        <div id="reviewArea">
+          <div id="reviewExisting" class="d-none small text-muted"></div>
+          <form id="reviewForm" class="d-none">
+            <label class="form-label mb-1">Ваша оценка приёма</label>
+            <select id="reviewRating" class="form-select form-select-sm mb-2">
+              <option value="5">5 — отлично</option><option value="4">4 — хорошо</option>
+              <option value="3">3 — нормально</option><option value="2">2 — плохо</option><option value="1">1 — ужасно</option>
+            </select>
+            <textarea id="reviewBody" class="form-control form-control-sm mb-2" rows="2" placeholder="Комментарий (необязательно)"></textarea>
+            <button type="button" id="reviewSubmit" class="btn btn-orange btn-sm">Оставить отзыв</button>
+            <div id="reviewMsg" class="small text-danger mt-1"></div>
+          </form>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../lib/db.php';
 require_once __DIR__ . '/../../lib/auth.php';
 require_once __DIR__ . '/../../lib/csrf.php';
+require_once __DIR__ . '/../../lib/appointment.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
@@ -13,8 +14,10 @@ $apptId = (int) ($_POST['appointment_id'] ?? 0);
 $status = (string) ($_POST['status'] ?? '');
 if (!in_array($status, ['created','confirmed','performed','completed','noshow'], true)) { echo json_encode(['ok'=>false,'error'=>'Недопустимый статус.']); exit; }
 
-$a = DB::one("SELECT id FROM appointment WHERE id = :id", ['id'=>$apptId]);
+$a = DB::one("SELECT id, status FROM appointment WHERE id = :id", ['id'=>$apptId]);
 if ($a === null) { echo json_encode(['ok'=>false,'error'=>'Запись не найдена.']); exit; }
 
+$old = $a['status'];
 DB::exec("UPDATE appointment SET status = :st WHERE id = :id", ['st'=>$status,'id'=>$apptId]);
+appt_log_status($apptId, $old, $status, (int)Auth::user()['id']);
 echo json_encode(['ok'=>true]);
