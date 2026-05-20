@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/PHPMailer/Exception.php';
 require_once __DIR__ . '/PHPMailer/PHPMailer.php';
 require_once __DIR__ . '/PHPMailer/SMTP.php';
@@ -18,10 +19,11 @@ final class Mailer
      */
     public static function send(string $to, string $subject, string $bodyText): bool
     {
-        if (SMTP_USER === '') {
-            return self::logToFile($to, $subject, $bodyText);
-        }
-        return self::sendSmtp($to, $subject, $bodyText);
+        $ok = (SMTP_USER === '') ? self::logToFile($to, $subject, $bodyText) : self::sendSmtp($to, $subject, $bodyText);
+        try {
+            DB::exec("INSERT INTO notification_log (recipient, subject) VALUES (:r, :s)", ['r' => $to, 's' => $subject]);
+        } catch (Throwable $e) { error_log('[notification_log] ' . $e->getMessage()); }
+        return $ok;
     }
 
     private static function sendSmtp(string $to, string $subject, string $bodyText): bool

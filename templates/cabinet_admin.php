@@ -158,6 +158,7 @@ $chartData = [
             <a href="/services.php" class="btn btn-outline-orange btn-sm">Каталог услуг</a>
             <a href="/blog.php" class="btn btn-outline-orange btn-sm">Блог</a>
             <a href="/admin/specializations.php" class="btn btn-outline-orange btn-sm">Специализации</a>
+            <a href="/admin/notifications.php" class="btn btn-outline-orange btn-sm">Журнал писем</a>
         </div>
     </div>
     <div class="table-responsive">
