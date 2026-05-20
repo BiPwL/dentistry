@@ -23,7 +23,7 @@ foreach (DB::all("SELECT s.name, aps.price_at_time FROM appointment_service aps 
     $services[] = ['name' => $s['name'], 'price' => fmt_price($s['price_at_time'])];
     $total += (float) $s['price_at_time'];
 }
-$payment = DB::one("SELECT method FROM payment WHERE appointment_id = :id", ['id'=>$apptId]);
+$payment = DB::one("SELECT pm.code AS method FROM payment pay JOIN payment_method pm ON pm.id = pay.method_id WHERE pay.appointment_id = :id", ['id'=>$apptId]);
 
 echo json_encode([
     'ok' => true,
