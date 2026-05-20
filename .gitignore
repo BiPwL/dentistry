@@ -3,3 +3,9 @@
 data/mail.log
 data/*.log
 config.local.php
+# Пользовательские загрузки (картинки услуг/блога/врачей) — не в git, .gitkeep сохраняет папки
+public/uploads/**/*.jpg
+public/uploads/**/*.jpeg
+public/uploads/**/*.png
+public/uploads/**/*.webp
+public/uploads/**/*.gif
