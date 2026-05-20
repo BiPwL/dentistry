@@ -45,6 +45,10 @@
     document.querySelectorAll('.appt-completed').forEach(function (row) {
         row.addEventListener('click', function () {
             var aid = row.dataset.apptId;
+            var proto = document.getElementById('completedProtocol');
+            var receipt = document.getElementById('completedReceipt');
+            if (proto) proto.href = '/protocol_view.php?appointment_id=' + aid;
+            if (receipt) receipt.href = '/receipt.php?appointment_id=' + aid;
             var holder = document.querySelector('.appt-services[data-appt-id="' + aid + '"]');
             var list = document.getElementById('completedServices');
             list.innerHTML = '';

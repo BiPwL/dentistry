@@ -32,13 +32,27 @@
     var elErr = document.getElementById('apptError');
     var elServices = document.getElementById('apptServices');
     var elProtoArea = document.getElementById('protocolArea');
-    var btnPerformed = document.getElementById('markPerformed');
+    var elMedCard = document.getElementById('apptMedCard');
+
+    var canEditServices = false;
+    var addProtoBtn = null;
+
+    function collectServiceIds() {
+        return Array.prototype.slice.call(elServices.querySelectorAll('.svc-cb:checked')).map(function (cb) { return cb.value; });
+    }
+
+    // Кнопка «Добавить протокол» активна только если запись «Подтверждена» и выбрана хотя бы одна услуга
+    function updateProtoBtn() {
+        if (!addProtoBtn) return;
+        addProtoBtn.disabled = !(canEditServices && collectServiceIds().length > 0);
+    }
 
     function openAppt(id) {
         currentId = id;
         elErr.classList.add('d-none');
         elServices.innerHTML = 'Загрузка…';
         elProtoArea.innerHTML = '';
+        addProtoBtn = null;
         fetch('/api/doctor_appointment.php?id=' + encodeURIComponent(id))
             .then(function (r) { return r.json(); })
             .then(function (d) {
@@ -53,22 +67,32 @@
                 elPatient.textContent = a.patient_fio;
                 elWhen.textContent = a.when;
                 elStatus.textContent = a.status_label;
-                btnPerformed.classList.toggle('d-none', !a.can_perform);
+                canEditServices = a.can_edit_services;
+                if (elMedCard) elMedCard.href = '/med_card.php?patient_id=' + a.patient_id;
 
+                // Услуги: отмечать можно только когда статус «Подтверждена»
                 elServices.innerHTML = '';
                 d.services.forEach(function (s) {
-                    var id = 'svc_' + s.id;
+                    var sid = 'svc_' + s.id;
                     var wrap = document.createElement('div');
                     wrap.className = 'form-check';
                     var cb = document.createElement('input');
                     cb.className = 'form-check-input svc-cb';
-                    cb.type = 'checkbox'; cb.id = id; cb.value = s.id; cb.checked = s.checked;
+                    cb.type = 'checkbox'; cb.id = sid; cb.value = s.id; cb.checked = s.checked;
+                    cb.disabled = !canEditServices;
+                    cb.addEventListener('change', updateProtoBtn);
                     var lb = document.createElement('label');
-                    lb.className = 'form-check-label svc-toggle'; lb.htmlFor = id;
+                    lb.className = 'form-check-label svc-toggle'; lb.htmlFor = sid;
                     lb.textContent = s.name + ' (' + s.price + ')';
                     wrap.appendChild(cb); wrap.appendChild(lb);
                     elServices.appendChild(wrap);
                 });
+                if (!canEditServices) {
+                    var hint = document.createElement('div');
+                    hint.className = 'text-muted small mt-1';
+                    hint.textContent = 'Услуги можно отмечать только когда запись «Подтверждена».';
+                    elServices.appendChild(hint);
+                }
 
                 if (a.has_protocol) {
                     var view = document.createElement('a');
@@ -78,12 +102,13 @@
                     view.textContent = 'Открыть протокол приёма';
                     elProtoArea.appendChild(view);
                 } else {
-                    var add = document.createElement('button');
-                    add.type = 'button';
-                    add.className = 'btn btn-orange';
-                    add.textContent = 'Добавить протокол приёма';
-                    add.addEventListener('click', function () { saveServicesThen('/protocol_edit.php?appointment_id=' + a.id); });
-                    elProtoArea.appendChild(add);
+                    addProtoBtn = document.createElement('button');
+                    addProtoBtn.type = 'button';
+                    addProtoBtn.className = 'btn btn-orange';
+                    addProtoBtn.textContent = 'Добавить протокол приёма';
+                    addProtoBtn.addEventListener('click', function () { saveServicesThen('/protocol_edit.php?appointment_id=' + a.id); });
+                    elProtoArea.appendChild(addProtoBtn);
+                    updateProtoBtn();
                 }
                 modal.show();
             })
@@ -93,10 +118,6 @@
                 elServices.innerHTML = '';
                 modal.show();
             });
-    }
-
-    function collectServiceIds() {
-        return Array.prototype.slice.call(elServices.querySelectorAll('.svc-cb:checked')).map(function (cb) { return cb.value; });
     }
 
     function saveServices() {
@@ -112,13 +133,6 @@
 
     document.querySelectorAll('.appt-cell').forEach(function (cell) {
         cell.addEventListener('click', function () { openAppt(cell.dataset.apptId); });
-    });
-
-    btnPerformed.addEventListener('click', function () {
-        post('/api/doctor_set_status.php', { appointment_id: currentId }).then(function (d) {
-            if (d.ok) { location.reload(); }
-            else { elErr.textContent = d.error || 'Не удалось изменить статус.'; elErr.classList.remove('d-none'); }
-        });
     });
 
     var params = new URLSearchParams(location.search);

@@ -156,8 +156,8 @@ $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHER
       <div class="modal-body">
         <ul id="completedServices" class="list-unstyled mb-3"></ul>
         <div class="d-flex gap-2">
-          <button type="button" class="btn btn-outline-orange btn-sm" disabled title="Появится позже">Протокол приёма</button>
-          <button type="button" class="btn btn-outline-orange btn-sm" disabled title="Появится позже">Чек</button>
+          <a id="completedProtocol" class="btn btn-outline-orange btn-sm" target="_blank" rel="noopener" href="#">Протокол приёма</a>
+          <a id="completedReceipt" class="btn btn-outline-orange btn-sm" target="_blank" rel="noopener" href="#">Чек</a>
         </div>
       </div>
     </div>
