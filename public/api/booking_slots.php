@@ -38,6 +38,7 @@ foreach ($rows as $r) {
 
 $days = [];
 foreach ($dates as $date) {
+    if (doctor_is_off($doctorId, $date)) continue;
     $slots = [];
     foreach (slot_hours() as $h) {
         $start = sprintf('%s %02d:00:00', $date, $h);

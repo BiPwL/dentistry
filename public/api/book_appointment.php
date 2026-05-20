@@ -38,6 +38,10 @@ if (!is_valid_slot($slotStart)) {
     echo json_encode(['ok' => false, 'error' => 'Недопустимое время записи.']);
     exit;
 }
+if (doctor_is_off($doctorId, substr($slotStart, 0, 10))) {
+    echo json_encode(['ok' => false, 'error' => 'Врач не принимает в этот день.']);
+    exit;
+}
 if (DB::one('SELECT id FROM appointment WHERE doctor_id = :d AND slot_start = :s', ['d' => $doctorId, 's' => $slotStart]) !== null) {
     echo json_encode(['ok' => false, 'error' => 'Это время уже занято. Выберите другое.']);
     exit;

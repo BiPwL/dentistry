@@ -119,3 +119,9 @@ function appt_log_status(int $appointmentId, ?string $old, string $new, ?int $by
         ['a' => $appointmentId, 'o' => $old, 'n' => $new, 'u' => $byUserId]
     );
 }
+
+/** Выходной ли у врача в указанную дату ('Y-m-d'). */
+function doctor_is_off(int $doctorId, string $date): bool
+{
+    return DB::one("SELECT 1 FROM doctor_day_off WHERE doctor_id=:d AND off_date=:dt", ['d'=>$doctorId,'dt'=>$date]) !== null;
+}

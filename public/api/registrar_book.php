@@ -18,6 +18,7 @@ $doc = DB::one("SELECT id FROM user WHERE id = :id AND role_id = 3", ['id' => $d
 $pat = DB::one("SELECT id FROM user WHERE id = :id AND role_id = 4", ['id' => $patientId]);
 if ($doc === null || $pat === null) { echo json_encode(['ok'=>false,'error'=>'Врач или пациент не найден.']); exit; }
 if (!is_valid_slot($slot)) { echo json_encode(['ok'=>false,'error'=>'Недопустимый слот.']); exit; }
+if (doctor_is_off($doctorId, substr($slot, 0, 10))) { echo json_encode(['ok'=>false,'error'=>'Врач не принимает в этот день.']); exit; }
 
 $taken = DB::one("SELECT id FROM appointment WHERE doctor_id = :d AND slot_start = :s", ['d'=>$doctorId,'s'=>$slot]);
 if ($taken !== null) { echo json_encode(['ok'=>false,'error'=>'Слот уже занят.']); exit; }
