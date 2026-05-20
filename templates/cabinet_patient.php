@@ -42,7 +42,7 @@ $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHER
         <h1 class="h3 mb-0">Мои записи</h1>
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-orange" id="openBooking" <?= $banned ? 'disabled' : '' ?>>Записаться</button>
-            <button type="button" class="btn btn-outline-orange" disabled title="Появится позже">Мед. карта</button>
+            <a href="/med_card.php" target="_blank" class="btn btn-outline-orange">Мед. карта</a>
             <form method="post" action="/logout.php" class="m-0">
                 <?= Csrf::field() ?>
                 <button type="submit" class="btn btn-link text-muted">Выйти</button>

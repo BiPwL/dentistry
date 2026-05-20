@@ -3,19 +3,16 @@ require_once __DIR__ . '/../config.php';
 require_once __DIR__ . '/../lib/db.php';
 require_once __DIR__ . '/../lib/auth.php';
 require_once __DIR__ . '/../lib/sanitize.php';
-require_once __DIR__ . '/../lib/appointment.php';
+require_once __DIR__ . '/../lib/pdf.php';
 
-if (!Auth::isAuthenticated()) {
-    header('Location: /login.php');
-    exit;
-}
+if (!Auth::isAuthenticated()) { header('Location: /login.php'); exit; }
 $user   = Auth::user();
 $uid    = (int) $user['id'];
 $apptId = (int) ($_GET['appointment_id'] ?? 0);
 
 $row = DB::one(
     "SELECT a.id, a.slot_start, a.patient_id, a.doctor_id,
-            pr.protocol_text, pr.recommendations, pr.created_at,
+            pr.protocol_text, pr.recommendations,
             p.last_name AS p_last, p.first_name AS p_first, p.middle_name AS p_mid,
             d.last_name AS d_last, d.first_name AS d_first, d.middle_name AS d_mid
        FROM appointment a
@@ -25,60 +22,28 @@ $row = DB::one(
       WHERE a.id = :id",
     ['id' => $apptId]
 );
-if ($row === null) {
-    http_response_code(404);
-    echo 'Протокол не найден.';
-    exit;
-}
+if ($row === null) { http_response_code(404); echo 'Протокол не найден.'; exit; }
 $allowed = ($uid === (int) $row['doctor_id']) || ($uid === (int) $row['patient_id']) || ($user['role_code'] === 'admin');
-if (!$allowed) {
-    http_response_code(403);
-    echo 'Нет доступа.';
-    exit;
+if (!$allowed) { http_response_code(403); echo 'Нет доступа.'; exit; }
+
+$services = DB::all("SELECT s.name, aps.price_at_time FROM appointment_service aps JOIN service s ON s.id = aps.service_id WHERE aps.appointment_id = :id ORDER BY s.name", ['id' => $apptId]);
+
+$patientFio = $row['p_last'].' '.$row['p_first'].' '.$row['p_mid'];
+$doctorFio  = $row['d_last'].' '.$row['d_first'].' '.$row['d_mid'];
+
+$body  = '<h1>Протокол приёма</h1>';
+$body .= '<div class="row"><span class="lbl">Клиника:</span> ' . h(SITE_NAME) . '</div>';
+$body .= '<div class="row"><span class="lbl">Пациент:</span> ' . h($patientFio) . '</div>';
+$body .= '<div class="row"><span class="lbl">Врач:</span> ' . h($doctorFio) . '</div>';
+$body .= '<div class="row"><span class="lbl">Дата приёма:</span> ' . h(fmt_dt($row['slot_start'])) . '</div>';
+if (!empty($services)) {
+    $body .= '<h2>Оказанные услуги</h2><table><tr><th>Услуга</th><th class="right">Стоимость</th></tr>';
+    foreach ($services as $s) $body .= '<tr><td>' . h($s['name']) . '</td><td class="right">' . h(fmt_price($s['price_at_time'])) . '</td></tr>';
+    $body .= '</table>';
+}
+$body .= '<h2>Протокол</h2><div>' . nl2br(h($row['protocol_text'])) . '</div>';
+if (!empty($row['recommendations'])) {
+    $body .= '<h2>Рекомендации</h2><div>' . nl2br(h($row['recommendations'])) . '</div>';
 }
 
-$services = DB::all(
-    "SELECT s.name, aps.price_at_time FROM appointment_service aps JOIN service s ON s.id = aps.service_id WHERE aps.appointment_id = :id ORDER BY s.name",
-    ['id' => $apptId]
-);
-
-$_pageTitle = 'Протокол приёма';
-require __DIR__ . '/../templates/header.php';
-?>
-
-<div class="row justify-content-center">
-    <div class="col-md-9">
-        <div class="clinic-card p-4">
-            <div class="d-flex justify-content-between align-items-start mb-3">
-                <h1 class="h4 mb-0">Протокол приёма</h1>
-                <button class="btn btn-outline-orange btn-sm" onclick="window.print()">Печать</button>
-            </div>
-
-            <dl class="row mb-3">
-                <dt class="col-sm-3">Клиника</dt><dd class="col-sm-9"><?= h(SITE_NAME) ?></dd>
-                <dt class="col-sm-3">Пациент</dt><dd class="col-sm-9"><?= h($row['p_last'] . ' ' . $row['p_first'] . ' ' . $row['p_mid']) ?></dd>
-                <dt class="col-sm-3">Врач</dt><dd class="col-sm-9"><?= h($row['d_last'] . ' ' . $row['d_first'] . ' ' . $row['d_mid']) ?></dd>
-                <dt class="col-sm-3">Дата приёма</dt><dd class="col-sm-9"><?= h(fmt_dt($row['slot_start'])) ?></dd>
-            </dl>
-
-            <?php if (!empty($services)): ?>
-                <h6>Оказанные услуги</h6>
-                <ul>
-                    <?php foreach ($services as $s): ?>
-                        <li><?= h($s['name']) ?> — <?= h(fmt_price($s['price_at_time'])) ?></li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php endif; ?>
-
-            <h6>Протокол</h6>
-            <p style="white-space: pre-wrap;"><?= h($row['protocol_text']) ?></p>
-
-            <?php if (!empty($row['recommendations'])): ?>
-                <h6>Рекомендации</h6>
-                <p style="white-space: pre-wrap;"><?= h($row['recommendations']) ?></p>
-            <?php endif; ?>
-        </div>
-    </div>
-</div>
-
-<?php require __DIR__ . '/../templates/footer.php'; ?>
+pdf_render_inline(pdf_document($body, 'Протокол приёма'), 'protocol_' . $apptId . '.pdf');
