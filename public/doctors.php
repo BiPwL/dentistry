@@ -6,9 +6,10 @@ require_once __DIR__ . '/../lib/sanitize.php';
 $_pageTitle = 'Врачи клиники';
 $doctors = DB::all(
     "SELECT u.last_name, u.first_name, u.middle_name,
-            dp.specialization, dp.bio, dp.photo_path
+            sp.name AS specialization, dp.bio, dp.photo_path
        FROM user u
        LEFT JOIN doctor_profile dp ON dp.user_id = u.id
+       LEFT JOIN specialization sp ON sp.id = dp.specialization_id
       WHERE u.role_id = 3
       ORDER BY u.last_name, u.first_name"
 );

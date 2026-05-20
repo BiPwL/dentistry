@@ -157,6 +157,7 @@ $chartData = [
         <div class="d-flex gap-2">
             <a href="/services.php" class="btn btn-outline-orange btn-sm">Каталог услуг</a>
             <a href="/blog.php" class="btn btn-outline-orange btn-sm">Блог</a>
+            <a href="/admin/specializations.php" class="btn btn-outline-orange btn-sm">Специализации</a>
         </div>
     </div>
     <div class="table-responsive">
