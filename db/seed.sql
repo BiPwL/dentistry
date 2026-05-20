@@ -83,14 +83,19 @@ INSERT INTO protocol (id, appointment_id, protocol_text, recommendations) VALUES
     (3, 6, 'Профессиональная чистка ультразвуком. Художественная реставрация зуба 11 после скола.',
            'Избегать красящих продуктов 48 часов, осмотр через 6 месяцев.');
 
--- ───── Оплаты (для завершённых) ─────
-INSERT INTO payment (appointment_id, method, total_amount) VALUES
-    (5, 'card', 4200.00),
-    (6, 'cash', 10000.00);
+-- ───── Оплаты (для завершённых) ─────  method_id: 1=наличными, 2=картой
+INSERT INTO payment (appointment_id, method_id, total_amount) VALUES
+    (5, 2, 4200.00),
+    (6, 1, 10000.00);
 
--- ───── Профили врачей ─────
-INSERT INTO doctor_profile (user_id, specialization, bio) VALUES
-    (3, 'Врач-стоматолог-терапевт',
+-- ───── Профили врачей ─────  specialization_id: 1=терапевт, 2=хирург/ортопед
+INSERT INTO doctor_profile (user_id, specialization_id, bio) VALUES
+    (3, 1,
         'Стаж 12 лет. Специализируется на лечении кариеса, пульпита и эстетической реставрации. Бережный подход и безболезненное лечение.'),
-    (4, 'Стоматолог-хирург, ортопед',
+    (4, 2,
         'Стаж 9 лет. Удаление зубов любой сложности, протезирование, имплантология. Кандидат медицинских наук.');
+
+-- ───── Отзывы (демо, к завершённым записям) ─────
+INSERT INTO review (appointment_id, patient_id, doctor_id, rating, body) VALUES
+    (5, 5, 3, 5, 'Отличный врач, всё безболезненно.'),
+    (6, 6, 4, 4, 'Хорошо, но пришлось немного подождать.');
