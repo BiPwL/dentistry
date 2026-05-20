@@ -32,7 +32,8 @@ if (!empty($completedIds)) {
 }
 
 $hasCreated = (bool) array_filter($appointments, fn($a) => $a['status'] === 'created');
-$banned = !empty($user['booking_ban_until']) && $user['booking_ban_until'] >= date('Y-m-d');
+$banUntil = patient_booking_ban_until($pid);
+$banned = $banUntil !== null;
 
 $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHERE role_id = 3 ORDER BY last_name");
 ?>
@@ -56,8 +57,8 @@ $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHER
         </div>
     <?php endif; ?>
     <?php if ($banned): ?>
-        <div class="alert alert-warning py-2 small">
-            Онлайн-запись ограничена до <?= h($user['booking_ban_until']) ?> из-за неявки.
+        <div class="alert alert-danger py-2 small">
+            Самостоятельная онлайн-запись заблокирована до <?= h($banUntil) ?> из-за неявки (на неделю с даты неявки). Для записи обратитесь к регистратору.
         </div>
     <?php endif; ?>
 
