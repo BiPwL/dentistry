@@ -27,6 +27,8 @@ if ($role === 'patient') {
     require __DIR__ . '/../templates/cabinet_doctor.php';
 } elseif ($role === 'registrar') {
     require __DIR__ . '/../templates/cabinet_registrar.php';
+} elseif ($role === 'admin') {
+    require __DIR__ . '/../templates/cabinet_admin.php';
 } else {
     ?>
     <div class="row justify-content-center">
