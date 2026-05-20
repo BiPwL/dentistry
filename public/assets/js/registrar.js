@@ -60,8 +60,11 @@
                 var a = resp.appointment;
                 document.getElementById('mgPatient').textContent = a.patient_fio;
                 document.getElementById('mgWhen').textContent = a.when + ' · ' + a.status_label;
-                mgStatus.value = (a.status === 'completed') ? 'performed' : a.status;
+                mgStatus.value = a.status;
+                // После оплаты запись финализирована: статус, сохранение и отмена заблокированы
                 mgStatus.disabled = a.paid;
+                document.getElementById('mgStatusSave').disabled = a.paid;
+                document.getElementById('mgCancelBtn').disabled = a.paid;
                 var ul = document.getElementById('mgServices');
                 ul.innerHTML = '';
                 resp.services.forEach(function (s) { var li = document.createElement('li'); li.textContent = s.name + ' — ' + s.price; ul.appendChild(li); });

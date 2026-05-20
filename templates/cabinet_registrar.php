@@ -119,6 +119,7 @@ if ($selDoctor > 0) {
                 <option value="created">Создана</option>
                 <option value="confirmed">Подтверждена</option>
                 <option value="performed">Исполнена</option>
+                <option value="completed">Завершена</option>
                 <option value="noshow">Не явка</option>
             </select>
             <button type="button" class="btn btn-outline-orange" id="mgStatusSave">Сохранить</button>

@@ -11,7 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Csrf::check($_POST['_csrf'] ?? nul
 
 $apptId = (int) ($_POST['appointment_id'] ?? 0);
 $status = (string) ($_POST['status'] ?? '');
-if (!in_array($status, ['created','confirmed','performed','noshow'], true)) { echo json_encode(['ok'=>false,'error'=>'Недопустимый статус.']); exit; }
+if (!in_array($status, ['created','confirmed','performed','completed','noshow'], true)) { echo json_encode(['ok'=>false,'error'=>'Недопустимый статус.']); exit; }
 
 $a = DB::one("SELECT id FROM appointment WHERE id = :id", ['id'=>$apptId]);
 if ($a === null) { echo json_encode(['ok'=>false,'error'=>'Запись не найдена.']); exit; }
