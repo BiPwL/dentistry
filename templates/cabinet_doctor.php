@@ -22,8 +22,6 @@ $byKey = [];
 foreach ($rows as $r) {
     $byKey[date('Y-m-d H:00:00', strtotime($r['slot_start']))] = $r;
 }
-
-$daysOff = DB::all("SELECT id, off_date, reason FROM doctor_day_off WHERE doctor_id=:d AND off_date >= CURDATE() ORDER BY off_date", ['d'=>$docId]);
 ?>
 
 <div id="doctor-cabinet" data-csrf="<?= h(Csrf::token()) ?>">
@@ -76,26 +74,6 @@ $daysOff = DB::all("SELECT id, off_date, reason FROM doctor_day_off WHERE doctor
             </tbody>
         </table>
     </div>
-</div>
-
-<div class="clinic-card p-3 my-4">
-    <h5 class="mb-3">Мои выходные</h5>
-    <form method="post" action="/api/doctor_dayoff_add.php" class="row g-2 align-items-end mb-3">
-        <?= Csrf::field() ?>
-        <div class="col-auto"><label class="form-label mb-0 small">Дата</label><input type="date" name="off_date" class="form-control" required></div>
-        <div class="col-auto"><label class="form-label mb-0 small">Причина</label><input type="text" name="reason" class="form-control" placeholder="Отпуск"></div>
-        <div class="col-auto"><button class="btn btn-orange">Добавить</button></div>
-    </form>
-    <?php if (empty($daysOff)): ?><p class="text-muted small mb-0">Выходных не запланировано.</p><?php else: ?>
-        <ul class="list-group">
-            <?php foreach ($daysOff as $do): ?>
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <span><?= h(ru_date_label($do['off_date'])) ?><?= $do['reason'] ? ' — ' . h($do['reason']) : '' ?></span>
-                    <form method="post" action="/api/doctor_dayoff_del.php" class="m-0"><?= Csrf::field() ?><input type="hidden" name="id" value="<?= (int)$do['id'] ?>"><button class="btn btn-outline-danger btn-sm">Удалить</button></form>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
 </div>
 
 <div class="modal fade" id="apptModal" tabindex="-1" aria-hidden="true">

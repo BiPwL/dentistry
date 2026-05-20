@@ -174,18 +174,33 @@ $doctors = DB::all("SELECT id, last_name, first_name, middle_name FROM user WHER
         </div>
         <hr>
         <div id="reviewArea">
-          <div id="reviewExisting" class="d-none small text-muted"></div>
-          <form id="reviewForm" class="d-none">
-            <label class="form-label mb-1">Ваша оценка приёма</label>
-            <select id="reviewRating" class="form-select form-select-sm mb-2">
-              <option value="5">5 — отлично</option><option value="4">4 — хорошо</option>
-              <option value="3">3 — нормально</option><option value="2">2 — плохо</option><option value="1">1 — ужасно</option>
-            </select>
-            <textarea id="reviewBody" class="form-control form-control-sm mb-2" rows="2" placeholder="Комментарий (необязательно)"></textarea>
-            <button type="button" id="reviewSubmit" class="btn btn-orange btn-sm">Оставить отзыв</button>
-            <div id="reviewMsg" class="small text-danger mt-1"></div>
-          </form>
+          <div id="reviewExisting" class="d-none small text-muted mb-2"></div>
+          <button type="button" id="openReview" class="btn btn-orange btn-sm d-none">Оставить отзыв</button>
         </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Отзыв о приёме</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label mb-1">Ваша оценка</label>
+        <select id="reviewRating" class="form-select mb-2">
+          <option value="5">5 — отлично</option><option value="4">4 — хорошо</option>
+          <option value="3">3 — нормально</option><option value="2">2 — плохо</option><option value="1">1 — ужасно</option>
+        </select>
+        <textarea id="reviewBody" class="form-control mb-2" rows="3" placeholder="Комментарий (необязательно)"></textarea>
+        <div id="reviewMsg" class="small text-danger"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-orange" data-bs-dismiss="modal">Отмена</button>
+        <button type="button" id="reviewSubmit" class="btn btn-orange">Отправить</button>
       </div>
     </div>
   </div>

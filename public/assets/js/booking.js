@@ -42,6 +42,9 @@
     // ─── Модалка завершённой записи ───
     var completedModalEl = document.getElementById('completedModal');
     var completedModal = completedModalEl ? new bootstrap.Modal(completedModalEl) : null;
+    var reviewModalEl = document.getElementById('reviewModal');
+    var reviewModal = reviewModalEl ? new bootstrap.Modal(reviewModalEl) : null;
+    var currentCompletedAppt = null;
     document.querySelectorAll('.appt-completed').forEach(function (row) {
         row.addEventListener('click', function () {
             var aid = row.dataset.apptId;
@@ -63,58 +66,51 @@
                 });
             }
 
-            // ─── Review handling ───
+            // ─── Review: показать существующий отзыв или кнопку «Оставить отзыв» ───
+            currentCompletedAppt = aid;
             var reviewsDataEl = document.getElementById('reviews-data');
             var reviewsData = reviewsDataEl ? JSON.parse(reviewsDataEl.textContent) : {};
             var review = reviewsData[aid];
             var reviewExisting = document.getElementById('reviewExisting');
-            var reviewForm = document.getElementById('reviewForm');
-            var reviewRating = document.getElementById('reviewRating');
-            var reviewBody = document.getElementById('reviewBody');
-            var reviewMsg = document.getElementById('reviewMsg');
-
+            var openReview = document.getElementById('openReview');
             if (review) {
-                // Show existing review
-                if (reviewExisting) reviewExisting.classList.remove('d-none');
-                if (reviewForm) reviewForm.classList.add('d-none');
-                if (reviewExisting) reviewExisting.textContent = 'Ваша оценка: ' + review.rating + '. ' + (review.body || '');
+                if (reviewExisting) { reviewExisting.classList.remove('d-none'); reviewExisting.textContent = 'Ваш отзыв: ' + review.rating + '★' + (review.body ? ' — ' + review.body : ''); }
+                if (openReview) openReview.classList.add('d-none');
             } else {
-                // Show form
                 if (reviewExisting) reviewExisting.classList.add('d-none');
-                if (reviewForm) reviewForm.classList.remove('d-none');
-                if (reviewRating) reviewRating.value = '5';
-                if (reviewBody) reviewBody.value = '';
-                if (reviewMsg) reviewMsg.textContent = '';
+                if (openReview) openReview.classList.remove('d-none');
             }
 
             if (completedModal) completedModal.show();
         });
     });
 
-    // ─── Review submission ───
+    // ─── Открыть окно отзыва ───
+    var openReviewBtn = document.getElementById('openReview');
+    if (openReviewBtn && reviewModal) {
+        openReviewBtn.addEventListener('click', function () {
+            var rr = document.getElementById('reviewRating'); if (rr) rr.value = '5';
+            var rb = document.getElementById('reviewBody'); if (rb) rb.value = '';
+            var rm = document.getElementById('reviewMsg'); if (rm) rm.textContent = '';
+            if (completedModal) completedModal.hide();
+            reviewModal.show();
+        });
+    }
+
+    // ─── Отправка отзыва ───
     var reviewSubmit = document.getElementById('reviewSubmit');
     if (reviewSubmit) {
         reviewSubmit.addEventListener('click', function () {
-            var aid = null;
-            var row = document.querySelector('.appt-completed');
-            if (row) aid = row.dataset.apptId;
-            if (!aid) return;
-
+            if (!currentCompletedAppt) return;
             var rating = document.getElementById('reviewRating') ? document.getElementById('reviewRating').value : '5';
             var body = document.getElementById('reviewBody') ? document.getElementById('reviewBody').value : '';
             var msg = document.getElementById('reviewMsg');
-
-            post('/api/submit_review.php', { appointment_id: aid, rating: rating, body: body })
+            post('/api/submit_review.php', { appointment_id: currentCompletedAppt, rating: rating, body: body })
                 .then(function (d) {
-                    if (d.ok) {
-                        location.reload();
-                    } else {
-                        if (msg) msg.textContent = d.error || 'Ошибка при отправке.';
-                    }
+                    if (d.ok) { location.reload(); }
+                    else { if (msg) msg.textContent = d.error || 'Ошибка при отправке.'; }
                 })
-                .catch(function (e) {
-                    if (msg) msg.textContent = 'Ошибка соединения.';
-                });
+                .catch(function () { if (msg) msg.textContent = 'Ошибка соединения.'; });
         });
     }
 

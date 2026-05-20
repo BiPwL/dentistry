@@ -28,7 +28,7 @@ require __DIR__ . '/../templates/header.php';
         <?php foreach ($doctors as $d): ?>
             <?php $fio = trim($d['last_name'] . ' ' . $d['first_name'] . ' ' . $d['middle_name']); ?>
             <div class="col-md-6 col-lg-4">
-                <div class="clinic-card h-100 text-center p-4">
+                <a href="/doctor.php?id=<?= (int) $d['id'] ?>" class="clinic-card h-100 text-center p-4 d-block text-reset text-decoration-none">
                     <?php if (!empty($d['photo_path'])): ?>
                         <img src="/<?= h($d['photo_path']) ?>" alt="<?= h($fio) ?>"
                              class="doctor-photo mb-3" onerror="this.style.display='none'">
@@ -47,7 +47,8 @@ require __DIR__ . '/../templates/header.php';
                     <?php if (!empty($d['bio'])): ?>
                         <p class="text-muted small mb-0"><?= h($d['bio']) ?></p>
                     <?php endif; ?>
-                </div>
+                    <div class="small text-orange-2 mt-2">Подробнее →</div>
+                </a>
             </div>
         <?php endforeach; ?>
     </div>
