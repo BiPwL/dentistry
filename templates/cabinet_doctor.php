@@ -88,7 +88,7 @@ foreach ($rows as $r) {
       </div>
       <div class="modal-body">
         <div id="apptError" class="alert alert-danger d-none"></div>
-        <button type="button" class="btn btn-orange btn-sm mb-3 d-none" id="markPerformed">Завершить приём (Исполнена)</button>
+        <a class="btn btn-outline-orange btn-sm mb-3" id="apptMedCard" target="_blank" rel="noopener" href="#">Мед. карта пациента</a>
         <h6>Оказанные услуги</h6>
         <div id="apptServices" class="mb-3"></div>
         <div id="protocolArea"></div>

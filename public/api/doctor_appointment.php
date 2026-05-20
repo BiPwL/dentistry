@@ -17,7 +17,7 @@ $docId  = (int) Auth::user()['id'];
 $apptId = (int) ($_GET['id'] ?? 0);
 
 $a = DB::one(
-    "SELECT a.id, a.slot_start, a.status,
+    "SELECT a.id, a.slot_start, a.status, a.patient_id,
             p.last_name, p.first_name, p.middle_name
        FROM appointment a
        JOIN user p ON p.id = a.patient_id
@@ -48,13 +48,14 @@ $hasProtocol = DB::one('SELECT id FROM protocol WHERE appointment_id = :id', ['i
 echo json_encode([
     'ok' => true,
     'appointment' => [
-        'id'            => (int) $a['id'],
-        'patient_fio'   => $a['last_name'] . ' ' . $a['first_name'] . ' ' . $a['middle_name'],
-        'status'        => $a['status'],
-        'status_label'  => appt_status_label($a['status']),
-        'when'          => fmt_dt($a['slot_start']),
-        'can_perform'   => $a['status'] === 'confirmed',
-        'has_protocol'  => $hasProtocol,
+        'id'                => (int) $a['id'],
+        'patient_id'        => (int) $a['patient_id'],
+        'patient_fio'       => $a['last_name'] . ' ' . $a['first_name'] . ' ' . $a['middle_name'],
+        'status'            => $a['status'],
+        'status_label'      => appt_status_label($a['status']),
+        'when'              => fmt_dt($a['slot_start']),
+        'can_edit_services' => $a['status'] === 'confirmed',
+        'has_protocol'      => $hasProtocol,
     ],
     'services' => $services,
 ], JSON_UNESCAPED_UNICODE);
