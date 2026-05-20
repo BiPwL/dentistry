@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config.php';
+require_once __DIR__ . '/db.php';
 
 /** Все статусы записи в порядке жизненного цикла. */
 const APPT_STATUSES = ['created', 'confirmed', 'performed', 'completed', 'noshow'];
@@ -87,4 +88,24 @@ function is_valid_slot(string $slotStart, int $daysAhead = 14): bool
     $maxTs = strtotime('today +' . ($daysAhead + 1) . ' day');
     if ($ts >= $maxTs) return false;
     return true;
+}
+
+/**
+ * Дата окончания запрета на самостоятельную онлайн-запись из-за неявки.
+ * Считается динамически: последняя неявка пациента + NOSHOW_BAN_DAYS дней.
+ * Возвращает 'Y-m-d', если запрет сейчас активен, иначе null.
+ * Касается только самостоятельной записи пациента — регистратор не ограничен.
+ */
+function patient_booking_ban_until(int $patientId): ?string
+{
+    $row = DB::one(
+        "SELECT MAX(DATE(slot_start)) AS last_noshow
+           FROM appointment WHERE patient_id = :p AND status = 'noshow'",
+        ['p' => $patientId]
+    );
+    if (empty($row['last_noshow'])) {
+        return null;
+    }
+    $banUntil = date('Y-m-d', strtotime($row['last_noshow'] . ' +' . (int) NOSHOW_BAN_DAYS . ' days'));
+    return $banUntil >= date('Y-m-d') ? $banUntil : null;
 }

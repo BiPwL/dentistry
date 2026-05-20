@@ -21,8 +21,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !Csrf::check($_POST['_csrf'] ?? nul
 $patient   = Auth::user();
 $patientId = (int) $patient['id'];
 
-if (!empty($patient['booking_ban_until']) && $patient['booking_ban_until'] >= date('Y-m-d')) {
-    echo json_encode(['ok' => false, 'error' => 'Онлайн-запись временно ограничена до ' . $patient['booking_ban_until'] . ' из-за неявки.']);
+$banUntil = patient_booking_ban_until($patientId);
+if ($banUntil !== null) {
+    echo json_encode(['ok' => false, 'error' => 'Самостоятельная онлайн-запись ограничена до ' . $banUntil . ' из-за неявки.']);
     exit;
 }
 
